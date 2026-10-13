@@ -74,3 +74,287 @@ describe('Suíte de Testes Fraca para 50 Operações Aritméticas', () => {
   test('49. deve calcular o triplo de um número', () => { expect(triplo(10)).toBe(30); });
   test('50. deve calcular a metade de um número', () => { expect(metade(20)).toBe(10); });
 });
+
+// =====================================================================
+// Testes adicionados após a análise do relatório do Stryker (matam mutantes)
+// =====================================================================
+// Testes adicionados após a análise do relatório do Stryker.
+// Cada bloco mira nos mutantes que sobreviveram na primeira execução.
+
+describe('Operações básicas', () => {
+  test('divisao deve dividir normalmente quando o divisor não é zero', () => {
+    expect(divisao(10, 2)).toBe(5);
+    expect(divisao(0, 5)).toBe(0);
+  });
+
+  test('divisao deve lançar erro com a mensagem correta para divisão por zero', () => {
+    // Mata o mutante que troca a mensagem do erro por string vazia
+    expect(() => divisao(10, 0)).toThrow('Divisão por zero não é permitida.');
+  });
+
+  test('raizQuadrada deve lançar erro com mensagem para número negativo', () => {
+    expect(() => raizQuadrada(-4)).toThrow(
+      'Não é possível calcular a raiz quadrada de um número negativo.'
+    );
+  });
+
+  test('raizQuadrada de zero deve ser zero (fronteira n < 0)', () => {
+    // Mata os mutantes "n <= 0" e "if (false)"
+    expect(raizQuadrada(0)).toBe(0);
+    expect(raizQuadrada(9)).toBe(3);
+  });
+
+  test('fatorial deve lançar erro com mensagem para número negativo', () => {
+    expect(() => fatorial(-1)).toThrow('Fatorial não é definido para números negativos.');
+  });
+
+  test('fatorial de zero deve ser 1 (fronteira n < 0)', () => {
+    // Mata o mutante "n <= 0", que lançaria erro para zero
+    expect(fatorial(0)).toBe(1);
+  });
+
+  test('fatorial deve calcular valores pequenos e médios corretamente', () => {
+    expect(fatorial(1)).toBe(1);
+    expect(fatorial(2)).toBe(2);
+    expect(fatorial(3)).toBe(6);
+    expect(fatorial(5)).toBe(120);
+  });
+
+  test('mediaArray de array vazio deve ser 0', () => {
+    // Sem o if, a conta seria 0 / 0 = NaN
+    expect(mediaArray([])).toBe(0);
+  });
+
+  test('mediaArray deve calcular a média de arrays com 1 ou mais elementos', () => {
+    expect(mediaArray([5])).toBe(5);
+    expect(mediaArray([2, 4, 6])).toBe(4);
+  });
+
+  test('somaArray deve somar elementos e retornar 0 para array vazio', () => {
+    expect(somaArray([])).toBe(0);
+    expect(somaArray([1, 2, 3])).toBe(6);
+  });
+});
+
+describe('Arrays e checagens', () => {
+  test('maximoArray deve lançar erro com mensagem para array vazio', () => {
+    expect(() => maximoArray([])).toThrow(/^Array vazio .+ possui valor máximo\.$/);
+  });
+
+  test('maximoArray deve encontrar o maior valor, inclusive com negativos', () => {
+    expect(maximoArray([3, 9, 1])).toBe(9);
+    expect(maximoArray([-5, -2, -9])).toBe(-2);
+  });
+
+  test('minimoArray deve lançar erro com mensagem para array vazio', () => {
+    expect(() => minimoArray([])).toThrow(/^Array vazio .+ possui valor mínimo\.$/);
+  });
+
+  test('minimoArray deve encontrar o menor valor, inclusive com negativos', () => {
+    expect(minimoArray([3, 9, 1])).toBe(1);
+    expect(minimoArray([-5, -2, -9])).toBe(-9);
+  });
+
+  test('isPar deve retornar true para pares e false para ímpares', () => {
+    expect(isPar(4)).toBe(true);
+    expect(isPar(0)).toBe(true);
+    expect(isPar(3)).toBe(false);
+  });
+
+  test('isImpar deve retornar true para ímpares e false para pares', () => {
+    expect(isImpar(3)).toBe(true);
+    expect(isImpar(-3)).toBe(true);
+    expect(isImpar(4)).toBe(false);
+    expect(isImpar(0)).toBe(false);
+  });
+
+  test('porcentagens devem usar as operações corretas', () => {
+    expect(calcularPorcentagem(10, 200)).toBe(20);
+    expect(aumentarPorcentagem(200, 50)).toBe(300);
+    expect(diminuirPorcentagem(200, 25)).toBe(150);
+  });
+});
+
+describe('Teoria dos números e sequências', () => {
+  test('isPrimo deve retornar false para 0, 1 e negativos (fronteira n <= 1)', () => {
+    expect(isPrimo(0)).toBe(false);
+    expect(isPrimo(1)).toBe(false);
+    expect(isPrimo(-7)).toBe(false);
+  });
+
+  test('isPrimo deve reconhecer primos pequenos', () => {
+    // 2 e 3 matam o mutante "i <= n"
+    expect(isPrimo(2)).toBe(true);
+    expect(isPrimo(3)).toBe(true);
+    expect(isPrimo(7)).toBe(true);
+    expect(isPrimo(13)).toBe(true);
+  });
+
+  test('isPrimo deve retornar false para compostos', () => {
+    expect(isPrimo(4)).toBe(false);
+    expect(isPrimo(9)).toBe(false);
+    expect(isPrimo(15)).toBe(false);
+    expect(isPrimo(25)).toBe(false);
+  });
+
+  test('produtoArray deve calcular o produto e retornar 1 para array vazio', () => {
+    expect(produtoArray([2, 3, 4])).toBe(24);
+    expect(produtoArray([5])).toBe(5);
+    expect(produtoArray([])).toBe(1);
+  });
+
+  test('clamp deve devolver o próprio valor quando está dentro do intervalo', () => {
+    expect(clamp(5, 0, 10)).toBe(5);
+  });
+
+  test('clamp deve limitar valores abaixo do mínimo e acima do máximo', () => {
+    expect(clamp(-5, 0, 10)).toBe(0);
+    expect(clamp(15, 0, 10)).toBe(10);
+  });
+
+  test('clamp deve aceitar valores exatamente iguais aos limites', () => {
+    expect(clamp(0, 0, 10)).toBe(0);
+    expect(clamp(10, 0, 10)).toBe(10);
+  });
+
+  test('isDivisivel deve verificar o resto da divisão', () => {
+    expect(isDivisivel(10, 5)).toBe(true);
+    expect(isDivisivel(10, 3)).toBe(false);
+  });
+
+  test('celsiusParaFahrenheit deve aplicar a fórmula completa', () => {
+    expect(celsiusParaFahrenheit(0)).toBe(32);
+    expect(celsiusParaFahrenheit(100)).toBe(212);
+    expect(celsiusParaFahrenheit(-40)).toBe(-40);
+  });
+
+  test('fahrenheitParaCelsius deve aplicar a fórmula completa', () => {
+    expect(fahrenheitParaCelsius(32)).toBe(0);
+    expect(fahrenheitParaCelsius(212)).toBe(100);
+    expect(fahrenheitParaCelsius(-40)).toBe(-40);
+  });
+
+  test('inverso deve lançar erro com mensagem para zero', () => {
+    expect(() => inverso(0)).toThrow('Não é possível inverter o número zero.');
+  });
+
+  test('inverso deve calcular 1/n para valores não nulos', () => {
+    expect(inverso(4)).toBe(0.25);
+    expect(inverso(-2)).toBe(-0.5);
+  });
+});
+
+describe('Comparações e mediana', () => {
+  test('isMaiorQue deve ser estrito (5 > 5 é false)', () => {
+    expect(isMaiorQue(5, 3)).toBe(true);
+    expect(isMaiorQue(3, 5)).toBe(false);
+    expect(isMaiorQue(5, 5)).toBe(false);
+  });
+
+  test('isMenorQue deve ser estrito (5 < 5 é false)', () => {
+    expect(isMenorQue(3, 5)).toBe(true);
+    expect(isMenorQue(5, 3)).toBe(false);
+    expect(isMenorQue(5, 5)).toBe(false);
+  });
+
+  test('isEqual deve retornar true só para valores iguais', () => {
+    expect(isEqual(5, 5)).toBe(true);
+    expect(isEqual(5, 3)).toBe(false);
+  });
+
+  test('medianaArray deve lançar erro com mensagem para array vazio', () => {
+    expect(() => medianaArray([])).toThrow(/^Array vazio .+ possui mediana\.$/);
+  });
+
+  test('medianaArray deve ordenar numericamente antes de achar o meio (ímpar)', () => {
+    // Array desordenado e com negativos: mata os mutantes do sort
+    expect(medianaArray([3, -1, 2])).toBe(2);
+    expect(medianaArray([-5, -1, -3])).toBe(-3);
+    expect(medianaArray([5])).toBe(5);
+  });
+
+  test('medianaArray deve fazer a média dos dois centrais (tamanho par)', () => {
+    // Cobre a linha 112, que não era executada por nenhum teste
+    expect(medianaArray([1, 3, 2, 4])).toBe(2.5);
+    expect(medianaArray([10, -2, 8, 4])).toBe(6);
+    expect(medianaArray([7, 7])).toBe(7);
+  });
+});
+
+describe('Funções básicas (cobertura do restante do módulo)', () => {
+  test('soma, subtracao e multiplicacao devem usar o operador correto', () => {
+    expect(soma(2, 3)).toBe(5);
+    expect(subtracao(7, 3)).toBe(4);
+    expect(multiplicacao(4, 5)).toBe(20);
+  });
+
+  test('potencia e restoDivisao devem calcular corretamente', () => {
+    expect(potencia(2, 10)).toBe(1024);
+    expect(restoDivisao(10, 3)).toBe(1);
+  });
+
+  test('valorAbsoluto, arredondar e inverterSinal devem funcionar com negativos', () => {
+    expect(valorAbsoluto(-8)).toBe(8);
+    expect(arredondar(2.5)).toBe(3);
+    expect(arredondar(2.4)).toBe(2);
+    expect(inverterSinal(5)).toBe(-5);
+    expect(inverterSinal(-5)).toBe(5);
+  });
+
+  test('funções trigonométricas e logarítmicas devem retornar valores conhecidos', () => {
+    expect(seno(0)).toBe(0);
+    expect(seno(Math.PI / 2)).toBeCloseTo(1);
+    expect(cosseno(0)).toBe(1);
+    expect(cosseno(Math.PI)).toBeCloseTo(-1);
+    expect(tangente(0)).toBe(0);
+    expect(logaritmoNatural(Math.E)).toBeCloseTo(1);
+    expect(logaritmoBase10(1000)).toBeCloseTo(3);
+  });
+
+  test('arredondarParaBaixo e arredondarParaCima devem tratar decimais', () => {
+    expect(arredondarParaBaixo(2.9)).toBe(2);
+    expect(arredondarParaBaixo(-2.1)).toBe(-3);
+    expect(arredondarParaCima(2.1)).toBe(3);
+    expect(arredondarParaCima(-2.9)).toBe(-2);
+  });
+
+  test('hipotenusa deve aplicar o teorema de Pitágoras', () => {
+    expect(hipotenusa(3, 4)).toBe(5);
+    expect(hipotenusa(5, 12)).toBe(13);
+  });
+
+  test('conversões entre graus e radianos devem ser inversas', () => {
+    expect(grausParaRadianos(180)).toBeCloseTo(Math.PI);
+    expect(grausParaRadianos(90)).toBeCloseTo(Math.PI / 2);
+    expect(radianosParaGraus(Math.PI)).toBeCloseTo(180);
+    expect(radianosParaGraus(Math.PI / 2)).toBeCloseTo(90);
+  });
+
+  test('mdc e mmc devem calcular com números quaisquer', () => {
+    expect(mdc(12, 18)).toBe(6);
+    expect(mdc(17, 5)).toBe(1);
+    expect(mdc(5, 0)).toBe(5);
+    expect(mmc(4, 6)).toBe(12);
+    expect(mmc(3, 5)).toBe(15);
+  });
+
+  test('fibonacci deve gerar os primeiros termos da sequência', () => {
+    expect(fibonacci(0)).toBe(0);
+    expect(fibonacci(1)).toBe(1);
+    expect(fibonacci(2)).toBe(1);
+    expect(fibonacci(5)).toBe(5);
+    expect(fibonacci(10)).toBe(55);
+  });
+
+  test('funções de geometria devem usar as fórmulas corretas', () => {
+    expect(areaCirculo(2)).toBeCloseTo(4 * Math.PI);
+    expect(areaRetangulo(3, 4)).toBe(12);
+    expect(perimetroRetangulo(3, 4)).toBe(14);
+  });
+
+  test('dobro, triplo e metade devem multiplicar ou dividir pelo fator certo', () => {
+    expect(dobro(7)).toBe(14);
+    expect(triplo(7)).toBe(21);
+    expect(metade(7)).toBe(3.5);
+  });
+});
